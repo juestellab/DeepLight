@@ -1,0 +1,35 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "deeplight"
+version = "0.1.0"
+dependencies = [
+    "jax",
+    "flax",
+    "optax",
+    "orbax",
+    "h5py",
+    "tensorboardX",
+    "matplotlib"
+]
+requires-python = ">=3.8"
+authors = [
+    {name = "Philipp Haim", email = "philipp.haim@helmholtz-munich.de"},
+]
+maintainers = [
+    {name = "Philipp Haim", email = "philipp.haim@helmholtz-munich.de"},
+]
+description = "DNN for light absorption in tissue"
+readme = "README.rst"
+# license = {file = "LICENSE.txt"}
+# keywords = ["NIFTy", "deeplight"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Programming Language :: Python"
+]
+
+[project.urls]
+# Documentation = "https://readthedocs.org"
+Repository = "https://github.com/me/spam.git"

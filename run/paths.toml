@@ -1,0 +1,4 @@
+[paths]
+data_dir = "./data" # "/home/storage/Data/DeepLight"
+network_weights_dir = "./networks" # "/home/storage/Results/DeepLight/flax/new_data"
+results_dir = "./results_dir" # "/home/storage/Results/DeepLight"
