@@ -22,7 +22,7 @@ maintainers = [
     {name = "Philipp Haim", email = "philipp.haim@helmholtz-munich.de"},
 ]
 description = "DNN for light absorption in tissue"
-readme = "README.rst"
+readme = "README.md"
 # license = {file = "LICENSE.txt"}
 # keywords = ["NIFTy", "deeplight"]
 classifiers = [
