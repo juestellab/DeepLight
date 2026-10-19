@@ -1,16 +1,10 @@
 name = "DeepLight"
 uuid = "5a0103ec-d191-493d-898b-0c9716af0e6e"
-authors = ["Philipp Haim <philipp.haim@gmail.com>"]
 version = "0.2.0"
+authors = ["Philipp Haim <philipp.haim@gmail.com>"]
 
 [deps]
-CairoMakie = "13f3f980-e62b-5c42-98c6-ff1f3baf88f0"
 HDF5 = "f67ccb44-e63f-5c2f-98bd-6dc0ccc4ba2f"
 Moca = "a1d23899-a9ce-461e-ac8b-6e9b09721758"
 ProgressMeter = "92933f4c-e287-5a05-a399-4b506db050ca"
 Random = "9a3f8284-a2c9-5f02-9a11-845980a1fd5c"
-Revise = "295af30f-e4ad-537b-8983-00126c2a3abe"
-Zygote = "e88e6eb3-aa80-5325-afca-941959d7151f"
-
-[compat]
-Revise = "3.7.2"

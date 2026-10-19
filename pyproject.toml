@@ -4,17 +4,21 @@ build-backend = "hatchling.build"
 
 [project]
 name = "deeplight"
-version = "0.1.0"
+version = "0.3.0"
 dependencies = [
-    "jax",
+    "jax[cuda13]",
     "flax",
     "optax",
-    "orbax",
     "h5py",
     "tensorboardX",
-    "matplotlib"
+    "matplotlib",
+    "pandas",
+    "seaborn",
+    "tomli>=2.4.1",
+    "nifty>=9.2.0",
+    "cmasher>=1.9.2",
 ]
-requires-python = ">=3.8"
+requires-python = ">=3.12"
 authors = [
     {name = "Philipp Haim", email = "philipp.haim@helmholtz-munich.de"},
 ]
@@ -22,7 +26,7 @@ maintainers = [
     {name = "Philipp Haim", email = "philipp.haim@helmholtz-munich.de"},
 ]
 description = "DNN for light absorption in tissue"
-readme = "README.md"
+# readme = "README.md"
 # license = {file = "LICENSE.txt"}
 # keywords = ["NIFTy", "deeplight"]
 classifiers = [

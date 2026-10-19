@@ -29,3 +29,22 @@ __pycache__
 .mind/
 .venv/
 .CondaPkg/
+
+# scratch and machine-local outputs
+relicts/
+run/logs/
+run/runs/
+nv
+*.bc
+
+# submission build products (the sources beside them are tracked)
+paper/deeplight_arxiv/
+paper/deeplight_tci/
+paper/deeplight_zip/
+paper/Resources_old/
+*.zip
+*.jpg
+*.eps
+
+# resolved per machine
+Manifest.toml

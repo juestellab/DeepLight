@@ -1,8 +1,18 @@
 import jax.numpy as jnp
 
 
-def softplus(x):
-    return x + jnp.log(1 + jnp.exp(-x))
+def softplus(x, scale=1.):
+    """`log(1 + exp(scale*x)) / scale`, evaluated without overflow.
+
+    The naive forms blow up in float32: `x + log(1 + exp(-x))` returns `inf`
+    below x = -88 (the exponent overflows) and already cancels to exactly 0
+    below x = -15, while `log(1 + exp(x))` saturates to `inf` above x = 88. A
+    correlated field that wanders into either tail then poisons the sample --
+    an `inf` times a zero mask is a NaN, which is how one test row ended up
+    with a NaN scattering field. `logaddexp` is the same function to within
+    5e-9 relative wherever the naive form worked, and finite everywhere else.
+    """
+    return jnp.logaddexp(scale * x, 0) / scale
 
 
 skinline_params = dict(
@@ -21,19 +31,19 @@ absorption_params = dict(
         offset=dict(mean=10, std=(5, 0.5)),
         fluctuations=(0.3, 0.1),
         loglogavgslope=(-3, 0.1),
-        nl=lambda x: jnp.log(1 + jnp.exp(x))
+        nl=softplus
     ),
     dermis=dict(
         offset=dict(mean=0.15, std=(0.06, 0.02)),
         fluctuations=(0.075, 0.02),
         loglogavgslope=(-3, 0.1),
-        nl=lambda x: jnp.maximum(jnp.log(1 + jnp.exp(x*100))/100, 0.05)
+        nl=lambda x: jnp.maximum(softplus(x, 100), 0.05)
     ),
     tissue=dict(
         offset=dict(mean=-1.5, std=(0.4, 0.1)),
         fluctuations=(1.2, 0.2),
         loglogavgslope=(-2.3, 0.1),
-        nl=lambda x: jnp.maximum(jnp.minimum(jnp.log(1 + jnp.exp(x)), 1.), 0.02)
+        nl=lambda x: jnp.maximum(jnp.minimum(softplus(x), 1.), 0.02)
     ),
     vessels=dict(
         offset=dict(mean=-250, std=(10, 5)),
@@ -46,28 +56,28 @@ absorption_params = dict(
 
 scattering_params = dict(
     coupling=dict(
-        offset=dict(mean=10, std=(1, 0.5)),
-        fluctuations=(1, 0.1),
+        offset=dict(mean=0, std=(0.5, 0.1)),
+        fluctuations=(0.05, 0.02),
         loglogavgslope=(-3, 0.1),
-        nl=lambda x: x + jnp.log(1 + jnp.exp(-x))
+        nl=softplus
     ),
     epidermis=dict(
-        offset=dict(mean=50, std=(10, 3)),
+        offset=dict(mean=110, std=(15, 3)),
         fluctuations=(5, 1),
         loglogavgslope=(-3, 0.1),
-        nl=lambda x: x + jnp.log(1 + jnp.exp(-x))
+        nl=softplus
     ),
     dermis=dict(
-        offset=dict(mean=50, std=(10, 3)),
+        offset=dict(mean=110, std=(15, 3)),
         fluctuations=(5, 1),
         loglogavgslope=(-3, 0.1),
         nl=softplus
     ),
     tissue=dict(
-        offset=dict(mean=260, std=(40, 10)),
-        fluctuations=(40, 10),
-        loglogavgslope=(-2.5, 0.1),
-        nl=lambda x: jnp.maximum(softplus(x), 120)
+        offset=dict(mean=110, std=(10, 2)),
+        fluctuations=(15, 3),
+        loglogavgslope=(-3.5, 0.1),
+        nl=lambda x: jnp.maximum(softplus(x), 80)
     ),
     vessels=None
 )
@@ -140,11 +150,11 @@ correlated_absorption = dict(
         offset=dict(mean=0., std=(0.02, 0.01)),
         fluctuations=(0.2, 0.05),
         loglogavgslope=(-2.5, 0.1),
-        nl=lambda x: jnp.maximum(jnp.log(1 + jnp.exp(10*x))/10, 0.001)
+        nl=lambda x: jnp.maximum(softplus(x, 10), 0.001)
 )
 
 correlated_scattering = dict(
-        offset=dict(mean=260, std=(40, 10)),
+        offset=dict(mean=110, std=(10, 2)),
         fluctuations=(40, 10),
         loglogavgslope=(-3, 0.1),
         nl=softplus
@@ -166,6 +176,14 @@ correlated_scattering_tangent = dict(
 )
 
 
+sign_field = dict(
+        offset=dict(mean=0., std=(0.1, 0.05)),
+        fluctuations=(4.0, 0.4),
+        loglogavgslope=(-2.0, 0.1),
+        nl=lambda x: jnp.tanh(2 * x)
+)
+
+
 params = dict(
     tissue_sample={"absorption": absorption_params,
                    "scattering": scattering_params,
@@ -179,8 +197,5 @@ params = dict(
                                                correlated=correlated_absorption_tangent),
                           "v_scattering": dict(coupling=scattering_tangent_params["coupling"],
                                                correlated=correlated_scattering_tangent)},
-    random_sample={"absorption": correlated_absorption,
-                   "scattering": correlated_scattering,
-                   "v_absorption": correlated_absorption_tangent,
-                   "v_scattering": correlated_scattering_tangent}
+    scaled_sign_tangent={"sign_field": sign_field},
 )
